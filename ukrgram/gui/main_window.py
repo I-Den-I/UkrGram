@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
@@ -38,7 +39,15 @@ class MainWindow(QMainWindow):
         self.message_view = QTextEdit()
         self.message_input = QLineEdit()
         self.send_button = QPushButton("Send")
+        self.toggle_automation_action = QAction("Enable automation", self)
+        self.toggle_automation_action.setCheckable(True)
+        self._build_menu()
         self._build_layout()
+
+    def _build_menu(self) -> None:
+        """Create the application menu bar with the automation toggle."""
+        automation_menu = self.menuBar().addMenu("Automation")
+        automation_menu.addAction(self.toggle_automation_action)
 
     def _build_layout(self) -> None:
         """Assemble the widget tree and install it as the central widget."""

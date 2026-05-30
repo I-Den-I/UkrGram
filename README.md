@@ -13,7 +13,7 @@ Layered, with strict separation of concerns. Dependencies point inward only
 | `config` | Environment-backed settings (`.env` → pydantic-settings) |
 | `core` | Client lifecycle, authentication, resilience (FloodWait/retry) |
 | `services` | High-level operations (dialogs, messages) |
-| `automation` | Userbot event engine + plugins — *next* |
+| `automation` | Userbot event engine + plugins (auto-reply, keyword notifier) |
 | `gui` | PyQt6 windows/widgets bridged to asyncio via `qasync` |
 | `models` | Immutable domain DTOs |
 | `utils` | Cross-cutting helpers (logging) |
@@ -49,3 +49,18 @@ dialogs — for your phone number, the login code and, if enabled, your 2FA
 password; the session is then cached under `SESSION_DIR` for subsequent runs.
 The window shows your dialogs on the left and the selected conversation on the
 right, with an input box to send messages.
+
+## Automation
+
+UkrGram runs in hybrid mode: alongside manual use, a plugin-based engine can
+react to incoming events. Toggle it from the **Automation** menu in the window.
+
+Built-in plugins:
+
+- **auto_reply** — replies once to each new incoming private chat, using
+  `AUTO_REPLY_TEXT`.
+- **keyword_notifier** — logs incoming messages containing any of
+  `NOTIFY_KEYWORDS` (comma-separated; contributes no handlers when empty).
+
+Add your own by subclassing `AutomationPlugin` and registering it with the
+`AutomationEngine` — no engine changes required (Open/Closed Principle).

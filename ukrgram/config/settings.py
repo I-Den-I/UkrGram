@@ -39,6 +39,14 @@ class Settings(BaseSettings):
     session_dir: Path = Field(default=Path("./sessions"), description="Session storage directory.")
     phone: str | None = Field(default=None, description="Optional login phone number.")
     log_level: str = Field(default="INFO", description="Root logging level.")
+    auto_reply_text: str = Field(
+        default="Automated reply from UkrGram. I will get back to you soon.",
+        description="Body of the automatic reply sent by the auto-reply plugin.",
+    )
+    notify_keywords: str = Field(
+        default="",
+        description="Comma-separated keywords watched by the notifier plugin.",
+    )
 
     @field_validator("log_level")
     @classmethod
@@ -69,6 +77,15 @@ class Settings(BaseSettings):
             Full path composed from ``session_dir`` and ``session_name``.
         """
         return self.session_dir.expanduser().resolve() / self.session_name
+
+    @property
+    def keyword_list(self) -> list[str]:
+        """Parse :attr:`notify_keywords` into a clean list of keywords.
+
+        Returns:
+            Keywords split on commas, stripped, with empty entries removed.
+        """
+        return [item.strip() for item in self.notify_keywords.split(",") if item.strip()]
 
 
 def load_settings() -> Settings:
