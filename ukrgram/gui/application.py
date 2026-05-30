@@ -8,6 +8,8 @@ import sys
 from PyQt6.QtWidgets import QApplication
 from qasync import QEventLoop
 
+from ukrgram.automation import AutomationEngine
+from ukrgram.automation.plugins import AutoReplyPlugin, KeywordNotifierPlugin
 from ukrgram.config import load_settings
 from ukrgram.core import TelegramClientManager
 from ukrgram.core.exceptions import UkrGramError
@@ -60,11 +62,15 @@ def run_app() -> int:
     window = MainWindow()
     auth_provider = GuiAuthProvider(parent=window)
     manager = TelegramClientManager(settings, auth_provider)
+    engine = AutomationEngine(manager)
+    engine.register_plugin(AutoReplyPlugin(settings.auto_reply_text))
+    engine.register_plugin(KeywordNotifierPlugin(settings.keyword_list))
     controller = AppController(
         window=window,
         manager=manager,
         dialog_service=DialogService(manager),
         message_service=MessageService(manager),
+        engine=engine,
     )
 
     close_event = asyncio.Event()

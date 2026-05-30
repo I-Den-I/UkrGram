@@ -6,6 +6,7 @@ import asyncio
 
 from PyQt6.QtWidgets import QListWidgetItem
 
+from ukrgram.automation import AutomationEngine
 from ukrgram.core.client import TelegramClientManager
 from ukrgram.core.exceptions import UkrGramError
 from ukrgram.gui.main_window import MainWindow
@@ -27,6 +28,7 @@ class AppController:
         manager: The Telegram client manager (core).
         dialog_service: Service providing dialog listings.
         message_service: Service providing message history and sending.
+        engine: The automation engine toggled from the GUI.
     """
 
     def __init__(
@@ -35,11 +37,13 @@ class AppController:
         manager: TelegramClientManager,
         dialog_service: DialogService,
         message_service: MessageService,
+        engine: AutomationEngine,
     ) -> None:
         self._window = window
         self._manager = manager
         self._dialogs = dialog_service
         self._messages = message_service
+        self._engine = engine
         self._dialog_titles: dict[int, str] = {}
         self._connect_signals()
 
@@ -48,6 +52,7 @@ class AppController:
         self._window.dialog_list.itemClicked.connect(self._on_dialog_clicked)
         self._window.send_button.clicked.connect(self._on_send_clicked)
         self._window.message_input.returnPressed.connect(self._on_send_clicked)
+        self._window.toggle_automation_action.toggled.connect(self._on_toggle_automation)
 
     def _on_dialog_clicked(self, _item: QListWidgetItem) -> None:
         """Schedule loading of the conversation for the clicked dialog."""
@@ -105,3 +110,33 @@ class AppController:
         except UkrGramError as exc:
             _LOGGER.error("Failed to send message: %s", exc)
             self._window.set_status(f"Error: {exc}")
+
+    def _on_toggle_automation(self, enabled: bool) -> None:
+        """Start or stop the automation engine from the menu toggle.
+
+        Args:
+            enabled: Desired automation state from the checkable menu action.
+        """
+        try:
+            if enabled:
+                self._engine.start()
+                plugins = ", ".join(self._engine.plugin_names)
+                self._window.set_status(f"Automation enabled: {plugins}.")
+            else:
+                self._engine.stop()
+                self._window.set_status("Automation disabled.")
+        except (UkrGramError, RuntimeError) as exc:
+            _LOGGER.error("Failed to toggle automation: %s", exc)
+            self._window.set_status(f"Error: {exc}")
+            self._reset_automation_action(to=not enabled)
+
+    def _reset_automation_action(self, *, to: bool) -> None:
+        """Force the automation toggle to a state without re-emitting signals.
+
+        Args:
+            to: The checked state to set on the action.
+        """
+        action = self._window.toggle_automation_action
+        action.blockSignals(True)
+        action.setChecked(to)
+        action.blockSignals(False)
