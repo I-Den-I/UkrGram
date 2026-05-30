@@ -51,6 +51,7 @@ class DialogService:
         Returns:
             The corresponding :class:`~ukrgram.models.domain.DialogInfo`.
         """
+        last = dialog.message
         return DialogInfo(
             id=dialog.id,
             title=dialog.name or "Unknown",
@@ -58,4 +59,6 @@ class DialogService:
             is_user=bool(dialog.is_user),
             is_group=bool(dialog.is_group),
             is_channel=bool(dialog.is_channel),
+            last_message=(last.message or "") if last is not None else "",
+            timestamp=last.date if last is not None else None,
         )
