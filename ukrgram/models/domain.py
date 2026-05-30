@@ -58,6 +58,8 @@ class DialogInfo:
     is_user: bool
     is_group: bool
     is_channel: bool
+    last_message: str = ""
+    timestamp: datetime | None = None
 
     @property
     def kind(self) -> str:

@@ -16,6 +16,7 @@ from ukrgram.core.exceptions import UkrGramError
 from ukrgram.gui.auth import GuiAuthProvider
 from ukrgram.gui.controllers import AppController
 from ukrgram.gui.main_window import MainWindow
+from ukrgram.gui.theme import build_stylesheet
 from ukrgram.services import DialogService, MessageService
 from ukrgram.utils import configure_logging, get_logger
 
@@ -56,6 +57,7 @@ def run_app() -> int:
     configure_logging(settings.log_level)
 
     app = QApplication.instance() or QApplication(sys.argv)
+    app.setStyleSheet(build_stylesheet())
     event_loop = QEventLoop(app)
     asyncio.set_event_loop(event_loop)
 

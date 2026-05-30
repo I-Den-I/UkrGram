@@ -47,8 +47,9 @@ python main.py
 Launches the PyQt6 desktop window. On first run you are prompted — via modal
 dialogs — for your phone number, the login code and, if enabled, your 2FA
 password; the session is then cached under `SESSION_DIR` for subsequent runs.
-The window shows your dialogs on the left and the selected conversation on the
-right, with an input box to send messages.
+The window is a Telegram-style dark UI: a chat list with avatars, last-message
+previews and unread badges on the left, and the selected conversation rendered
+as message bubbles on the right, with a rounded input box to send messages.
 
 ## Automation
 
