@@ -1,0 +1,10 @@
+# --- Core: Telegram MTProto client ---
+telethon>=1.36.0,<2.0.0
+
+# --- Configuration ---
+pydantic>=2.7.0,<3.0.0
+pydantic-settings>=2.3.0,<3.0.0
+
+# --- GUI: PyQt6 + asyncio bridge ---
+PyQt6>=6.7.0,<7.0.0
+qasync>=0.27.1,<0.28.0

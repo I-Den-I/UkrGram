@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ukrgram"
+version = "0.1.0"
+description = "UkrGram — a custom Telegram client (Telethon + PyQt6)."
+requires-python = ">=3.11"
+dependencies = [
+    "telethon>=1.36.0,<2.0.0",
+    "pydantic>=2.7.0,<3.0.0",
+    "pydantic-settings>=2.3.0,<3.0.0",
+    "PyQt6>=6.7.0,<7.0.0",
+    "qasync>=0.27.1,<0.28.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["ukrgram*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+ignore_missing_imports = true
