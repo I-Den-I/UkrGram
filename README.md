@@ -12,9 +12,9 @@ Layered, with strict separation of concerns. Dependencies point inward only
 |-------|----------------|
 | `config` | Environment-backed settings (`.env` → pydantic-settings) |
 | `core` | Client lifecycle, authentication, resilience (FloodWait/retry) |
-| `services` | High-level operations (dialogs, messages, contacts) — *next* |
+| `services` | High-level operations (dialogs, messages) |
 | `automation` | Userbot event engine + plugins — *next* |
-| `gui` | PyQt6 windows/widgets bridged to asyncio via `qasync` — *next* |
+| `gui` | PyQt6 windows/widgets bridged to asyncio via `qasync` |
 | `models` | Immutable domain DTOs |
 | `utils` | Cross-cutting helpers (logging) |
 
@@ -38,12 +38,14 @@ Layered, with strict separation of concerns. Dependencies point inward only
    cp .env.example .env
    ```
 
-## Run (bootstrap auth check)
+## Run
 
 ```bash
 python main.py
 ```
 
-This validates configuration and performs an interactive Telegram login,
-printing the authenticated account. The PyQt6 GUI is layered on top of the same
-core client in a later iteration.
+Launches the PyQt6 desktop window. On first run you are prompted — via modal
+dialogs — for your phone number, the login code and, if enabled, your 2FA
+password; the session is then cached under `SESSION_DIR` for subsequent runs.
+The window shows your dialogs on the left and the selected conversation on the
+right, with an input box to send messages.

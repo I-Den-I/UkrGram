@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,3 +37,56 @@ class AccountInfo:
         if self.username:
             return f"@{self.username}"
         return str(self.id)
+
+
+@dataclass(frozen=True, slots=True)
+class DialogInfo:
+    """Lightweight summary of a Telegram dialog (chat) for list rendering.
+
+    Attributes:
+        id: Unique identifier of the dialog's entity (user, group or channel).
+        title: Human-readable dialog title.
+        unread_count: Number of unread messages in the dialog.
+        is_user: ``True`` if the dialog is a one-to-one private chat.
+        is_group: ``True`` if the dialog is a group chat.
+        is_channel: ``True`` if the dialog is a broadcast channel.
+    """
+
+    id: int
+    title: str
+    unread_count: int
+    is_user: bool
+    is_group: bool
+    is_channel: bool
+
+    @property
+    def kind(self) -> str:
+        """Return a short single-character marker describing the dialog kind.
+
+        Returns:
+            ``"@"`` for users, ``"#"`` for channels, ``"*"`` for groups.
+        """
+        if self.is_user:
+            return "@"
+        if self.is_channel:
+            return "#"
+        return "*"
+
+
+@dataclass(frozen=True, slots=True)
+class MessageInfo:
+    """Immutable representation of a single Telegram message.
+
+    Attributes:
+        id: Unique message identifier within its dialog.
+        sender_name: Display name of the sender (or ``"You"`` for outgoing).
+        text: Plain-text body of the message; empty for media-only messages.
+        date: Timestamp at which the message was sent.
+        outgoing: ``True`` if the message was sent by the current account.
+    """
+
+    id: int
+    sender_name: str
+    text: str
+    date: datetime
+    outgoing: bool
