@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QSplitter,
     QTextEdit,
+    QToolBar,
     QVBoxLayout,
     QWidget,
 )
@@ -42,12 +43,27 @@ class MainWindow(QMainWindow):
         self.toggle_automation_action = QAction("Enable automation", self)
         self.toggle_automation_action.setCheckable(True)
         self._build_menu()
+        self._build_toolbar()
         self._build_layout()
 
     def _build_menu(self) -> None:
         """Create the application menu bar with the automation toggle."""
         automation_menu = self.menuBar().addMenu("Automation")
         automation_menu.addAction(self.toggle_automation_action)
+
+    def _build_toolbar(self) -> None:
+        """Create an always-visible toolbar exposing the automation toggle.
+
+        On macOS the menu bar is rendered at the top of the screen rather than
+        inside the window, so a toolbar button keeps the automation toggle
+        visible and discoverable within the window itself. The button shares the
+        same :class:`QAction` as the menu entry, so both stay in sync.
+        """
+        toolbar = QToolBar("Main", self)
+        toolbar.setMovable(False)
+        toolbar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+        toolbar.addAction(self.toggle_automation_action)
+        self.addToolBar(toolbar)
 
     def _build_layout(self) -> None:
         """Assemble the widget tree and install it as the central widget."""
